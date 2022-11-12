@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 # reference
 dt = 0.001  # under sampling can cause instability 
-time = np.arange(0, 1, dt)
+time = np.arange(0, 0.2, dt)
 control = 'piv'  # pid, piv
 mode = 'pos'  # pos, vel
 ref_theta = 1*np.ones(np.shape(time))
@@ -18,7 +18,7 @@ b = 0.1e-3
 J = 50e-6
 # control constants
 if control == 'piv':
-    BW = 20
+    BW = 5
     zeta = 1
     if mode == 'pos':
         kp = 2*np.pi*BW/(2*zeta+1)
@@ -27,8 +27,10 @@ if control == 'piv':
     ki = J*(2*zeta+1)*(2*np.pi*BW)**2
     kv = J*(2*zeta+1)*(2*np.pi*BW) - b
 elif control == 'pid':
-    ko = 1e-2
-    fo = 0.6
+    # ko = 1e-2
+    # fo = 0.6
+    ko = 5e-2
+    fo = 0.5
     # kp = 0.01
     # ki = 0
     # kd = 0
@@ -137,9 +139,14 @@ if __name__ == '__main__':
             u = pid(idx, dt, ref_theta[idx], yx)
         else:
             u = ref_theta[idx]  # open loop
+        u = u/Kt
         # yx, yv = model_d(i, dt, u)
         yx, yv = servo_d(idx, dt, u)
-
+    if control == 'pid':
+        print(f'Kp: {kp}, Ki: {ki}, Kd: {kd}')
+    elif control == 'piv':
+        print(f'Kp: {kp}, Ki: {ki}, Kv: {kv}')
+        
     # plotting
     plt.figure(1)
     plt.plot(time, r_arr, 'b', label='r')
@@ -150,4 +157,12 @@ if __name__ == '__main__':
     plt.plot(time, y_arr[0, :], '--', label='y1')
     plt.plot(time, y_arr[1, :], '--', label='y2')
     plt.legend()
+    plt.xlabel('second')
+    plt.ylabel('amplitude')
+    if control == 'pid':
+        plt.title('pid')
+    elif control == 'piv':
+        plt.title('piv')
+    else:
+        plt.title('open loop')
     plt.show()

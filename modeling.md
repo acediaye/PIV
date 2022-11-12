@@ -130,3 +130,82 @@ $$\dot{x} =
 $$
 
 # DC Motor Position
+![image](pics/DC_motor.PNG)
+
+DC motor can be modeled with an electrical part and a rotational mechanical part. Using sum of forces.
+
+$$T_{ext} = J\ddot\theta + b\dot\theta$$
+
+Using Kirchhoff's voltage law.
+
+$$V_{ext} = V_r + V_l + V_{emf}$$
+
+DC motor is proportional to the armature current and the magnetic field. $T = K_t i$ The back emf is proportional to the angular velocity of the shaft. $V_{emf} = K_b \dot\theta$. $V_l = L \frac{di}{dt}$
+
+Substituting the equations becomes
+
+$$K_t i = J\ddot\theta + b\dot\theta$$
+
+$$V_{ext} = Ri + L\frac{di}{dt} + K_b \dot\theta$$
+
+Taking the Laplace transform
+
+$$K_t I(s) = Js^2\theta(s) + bs\theta(s)$$
+
+$$I(s) = \frac{Js^2\theta(s) + bs\theta(s)}{K_t}$$
+
+$$V_{ext}(s) = RI(s) + LsI(s) + K_b s\theta(s)$$
+
+$$(Ls + R)I(s) = V_{ext}(s) - K_b s\theta(s)$$
+
+Substituting the electrical current into the mechanical toque equation becomes
+
+$$(Ls + R)\frac{Js^2\theta(s) + bs\theta(s)}{K_t} + K_b s\theta(s) = V_{ext}(s)$$
+
+$$\theta(s)[\frac{(Ls + R)(Js^2 + bs)}{K_t} + K_b s] = V_{ext}(s)$$
+
+$$\theta(s)[\frac{(Ls + R)(Js^2 + bs)}{K_t} + \frac{K_t K_b s}{K_t}] = V_{ext}(s)$$
+
+$$\frac{\theta(s)}{V_{ext}(s)} = \frac{K_t}{(Ls + R)(Js^2 + bs) + K_t K_b s}$$
+
+Angular position transfer function becomes
+
+$$\frac{\theta(s)}{V_{ext}(s)} = \frac{K_t}{s[(Ls + R)(Js + b) + K_t K_b]}$$
+
+The transfer function for angular velocity would be angular position * s
+
+$$\frac{\dot\theta(s)}{V_{ext}(s)} = \frac{K_t}{(Ls + R)(Js + b) + K_t K_b}$$
+
+The state space equation
+
+Choosing state
+
+$$x = \begin{bmatrix}\theta \\ \dot\theta \\ i\end{bmatrix}$$
+
+With the equations
+
+$$\ddot\theta = \frac{-b\dot\theta + K_t i}{J}$$
+
+$$\dot i = \frac{-K_b\dot\theta -Ri + V_{ext}}{L}$$
+
+With the form
+
+$$\dot x = Ax + Bu$$
+
+$$y = Cx + Du$$
+
+To become
+
+$$
+\begin{bmatrix}\dot\theta \\ \ddot\theta \\ \dot i\end{bmatrix} =
+\begin{bmatrix}0 && 1 && 0 \\ 0 && -b/J && K_t/J \\ 0 && -K_b/L && -R/L\end{bmatrix}
+\begin{bmatrix}\theta \\ \dot\theta \\ i\end{bmatrix} +
+\begin{bmatrix}0 \\ 0 \\ 1/L\end{bmatrix}
+\begin{bmatrix}V_{ext}\end{bmatrix}
+$$
+
+$$
+y = 
+\begin{bmatrix}1 && 0 && 0\end{bmatrix}
+\begin{bmatrix}\theta \\ \dot\theta \\ i\end{bmatrix}
+$$
